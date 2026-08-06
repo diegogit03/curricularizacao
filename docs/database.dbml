@@ -1,0 +1,60 @@
+Project Gestao_Financeira {
+  database_type: 'PostgreSQL'
+  Note: 'Modelo de dados para o sistema de gestão financeira do autônomo'
+}
+
+Table usuarios {
+  id_usuario integer [pk, increment]
+  nome varchar(100) [not null]
+  email varchar(150) [not null, unique]
+  senha varchar(255) [not null]
+  ativo boolean [not null, default: true]
+  criado_em timestamptz [default: `CURRENT_TIMESTAMP`]
+
+  Indexes {
+    email [name: 'idx_usuarios_email']
+  }
+}
+
+Table categorias {
+  id_categoria integer [pk, increment]
+  id_usuario integer [not null, ref: > usuarios.id_usuario]
+  nome varchar(50) [not null]
+  descricao text
+  criado_em timestamptz [default: `CURRENT_TIMESTAMP`]
+}
+
+Table transacoes {
+  id_transacao integer [pk, increment]
+  id_usuario integer [not null, ref: > usuarios.id_usuario]
+  id_categoria integer [not null, ref: > categorias.id_categoria]
+  descricao varchar(200) [not null]
+  valor numeric(12,2) [not null, note: 'valor > 0']
+  tipo varchar(10) [not null]
+  data_transacao date [not null]
+  criado_em timestamptz [default: `CURRENT_TIMESTAMP`]
+}
+
+Table contas_a_pagar {
+  id_conta_pagar integer [pk, increment]
+  id_usuario integer [not null, ref: > usuarios.id_usuario]
+  id_categoria integer [not null, ref: > categorias.id_categoria]
+  descricao varchar(200) [not null]
+  valor numeric(12,2) [not null, note: 'valor > 0']
+  data_vencimento date [not null]
+  status varchar(10) [not null, default: 'PENDENTE']
+  data_pagamento date
+  criado_em timestamptz [default: `CURRENT_TIMESTAMP`]
+}
+
+Table contas_a_receber {
+  id_conta_receber integer [pk, increment]
+  id_usuario integer [not null, ref: > usuarios.id_usuario]
+  id_categoria integer [not null, ref: > categorias.id_categoria]
+  descricao varchar(200) [not null]
+  valor numeric(12,2) [not null, note: 'valor > 0']
+  data_vencimento date [not null]
+  status varchar(10) [not null, default: 'PENDENTE']
+  data_recebimento date
+  criado_em timestamptz [default: `CURRENT_TIMESTAMP`]
+}

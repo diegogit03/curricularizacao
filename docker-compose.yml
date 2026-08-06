@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=curricularizacao
+      - POSTGRES_PASSWORD=curricularizacao
+      - POSTGRES_DB=curricularizacao
+    volumes:
+      - curricularizacao-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  curricularizacao-postgres-data:
