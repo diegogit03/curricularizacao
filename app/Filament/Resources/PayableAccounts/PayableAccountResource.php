@@ -26,6 +26,8 @@ class PayableAccountResource extends Resource
 
     protected static ?string $pluralLabel = 'Contas a Pagar';
 
+    protected static ?int $navigationSort = 3;
+
     protected static ?string $recordTitleAttribute = 'description';
 
     public static function form(Schema $schema): Schema

@@ -26,8 +26,8 @@ class ReceivableAccount extends Model
         return [
             'status' => ReceivableAccountStatus::class,
             'value' => 'decimal:2',
-            'due_at' => 'date',
-            'received_at' => 'date',
+            'due_at' => 'date:Y-m-d',
+            'received_at' => 'date:Y-m-d',
         ];
     }
 

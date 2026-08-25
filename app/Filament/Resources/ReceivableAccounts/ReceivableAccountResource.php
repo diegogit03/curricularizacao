@@ -26,6 +26,8 @@ class ReceivableAccountResource extends Resource
 
     protected static ?string $pluralLabel = 'Contas a Receber';
 
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $recordTitleAttribute = 'description';
 
     public static function form(Schema $schema): Schema

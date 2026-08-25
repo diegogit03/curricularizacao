@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Enums\TransactionType;
 use App\Filament\Resources\Transactions\Pages\CreateTransaction;
+use App\Filament\Widgets\StatsOverview;
+use App\Filament\Widgets\TransactionsChart;
 use App\Models\Category;
 use App\Models\Transaction;
 use App\Models\User;
@@ -20,6 +22,21 @@ class ResourcePagesTest extends TestCase
         parent::setUp();
 
         $this->actingAs(User::factory()->create());
+    }
+
+    public function test_dashboard_page_renders(): void
+    {
+        $this->get('/dashboard')
+            ->assertOk()
+            ->assertSeeLivewire(StatsOverview::class)
+            ->assertSeeLivewire(TransactionsChart::class);
+
+        Livewire::test(StatsOverview::class)
+            ->assertSee('Receitas')
+            ->assertSee('Despesas');
+
+        Livewire::test(TransactionsChart::class)
+            ->assertSee('Receitas vs despesas');
     }
 
     public function test_category_resource_pages_render(): void

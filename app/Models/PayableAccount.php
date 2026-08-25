@@ -26,8 +26,8 @@ class PayableAccount extends Model
         return [
             'status' => PayableAccountStatus::class,
             'value' => 'decimal:2',
-            'due_at' => 'date',
-            'paid_at' => 'date',
+            'due_at' => 'date:Y-m-d',
+            'paid_at' => 'date:Y-m-d',
         ];
     }
 
