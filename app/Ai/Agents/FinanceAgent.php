@@ -4,6 +4,8 @@ namespace App\Ai\Agents;
 
 use App\Ai\Tools\CreateCategory;
 use App\Ai\Tools\CreateTransaction;
+use App\Ai\Tools\ListCategories;
+use App\Ai\Tools\ListTransactions;
 use Laravel\Ai\Contracts\Agent;
 use Laravel\Ai\Contracts\Conversational;
 use Laravel\Ai\Contracts\HasTools;
@@ -44,6 +46,8 @@ class FinanceAgent implements Agent, Conversational, HasTools
         return [
             new CreateCategory,
             new CreateTransaction,
+            new ListCategories,
+            new ListTransactions,
         ];
     }
 }
