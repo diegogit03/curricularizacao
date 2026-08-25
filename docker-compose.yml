@@ -4,12 +4,12 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: curricularizacao
-      POSTGRES_PASSWORD: curricularizacao
-      POSTGRES_DB: curricularizacao
+      POSTGRES_USER: finance
+      POSTGRES_PASSWORD: finance
+      POSTGRES_DB: finance
     volumes:
-      - curricularizacao-postgres-data:/var/lib/postgresql/data
+      - finance-postgres-data:/var/lib/postgresql/data
       - ./database.sql:/docker-entrypoint-initdb.d/database.sql:ro
 
 volumes:
-  curricularizacao-postgres-data:
+  finance-postgres-data:
