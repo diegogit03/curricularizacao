@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->enum('type', ['REVENUE', 'EXPENSE']);
+            $table->softDeletes();
             $table->timestamps();
         });
 

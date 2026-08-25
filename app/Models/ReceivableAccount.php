@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Enums\ReceivableAccountStatus;
+use Database\Factories\ReceivableAccountFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,7 +13,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[Fillable(['description', 'status', 'value', 'due_at', 'received_at', 'category_id'])]
 class ReceivableAccount extends Model
 {
-    use SoftDeletes;
+    /** @use HasFactory<ReceivableAccountFactory> */
+    use HasFactory, SoftDeletes;
 
     /**
      * Get the attributes that should be cast.

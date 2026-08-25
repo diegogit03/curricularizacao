@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Enums\TransactionType;
+use Database\Factories\TransactionFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,7 +13,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[Fillable(['description', 'type', 'value', 'date', 'category_id'])]
 class Transaction extends Model
 {
-    use SoftDeletes;
+    /** @use HasFactory<TransactionFactory> */
+    use HasFactory, SoftDeletes;
 
     /**
      * Get the attributes that should be cast.
