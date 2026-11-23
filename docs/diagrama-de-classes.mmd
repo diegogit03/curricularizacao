@@ -1,0 +1,97 @@
+classDiagram
+    direction TB
+
+    class User {
+        <<Model>>
+        +string name
+        +string email
+        +string password
+        +datetime email_verified_at
+        +canAccessPanel(Panel panel) bool
+    }
+
+    class Category {
+        <<Model>>
+        +string name
+        +TransactionType type
+        +transactions() HasMany
+        +receivableAccounts() HasMany
+        +payableAccounts() HasMany
+    }
+
+    class Transaction {
+        <<Model>>
+        +string description
+        +TransactionType type
+        +decimal value
+        +date date
+        +category() BelongsTo
+        +bankAccount() BelongsTo
+    }
+
+    class ReceivableAccount {
+        <<Model>>
+        +string description
+        +ReceivableAccountStatus status
+        +decimal value
+        +date due_at
+        +date received_at
+        +category() BelongsTo
+        +bankAccount() BelongsTo
+    }
+
+    class PayableAccount {
+        <<Model>>
+        +string description
+        +PayableAccountStatus status
+        +decimal value
+        +date due_at
+        +date paid_at
+        +category() BelongsTo
+        +bankAccount() BelongsTo
+    }
+
+    class BankAccount {
+        <<Model>>
+        +string name
+        +string bank
+        +string agency
+        +string account_number
+        +decimal initial_balance
+        +transactions() HasMany
+        +receivableAccounts() HasMany
+        +payableAccounts() HasMany
+    }
+
+    class TransactionType {
+        <<enum>>
+        REVENUE
+        EXPENSE
+    }
+
+    class ReceivableAccountStatus {
+        <<enum>>
+        RECEIVED
+        PENDING
+    }
+
+    class PayableAccountStatus {
+        <<enum>>
+        PAID
+        PENDING
+    }
+
+    User --> Transaction : usa/histórico
+    Transaction "*" --> "1" Category : pertence a
+    ReceivableAccount "*" --> "1" Category : pertence a
+    PayableAccount "*" --> "1" Category : pertence a
+    Category "1" --> "*" Transaction : possui
+    Category "1" --> "*" ReceivableAccount : possui
+    Category "1" --> "*" PayableAccount : possui
+    Transaction "*" --> "0..1" BankAccount : movimenta
+    ReceivableAccount "*" --> "0..1" BankAccount : recebida em
+    PayableAccount "*" --> "0..1" BankAccount : paga por
+    Transaction --> TransactionType
+    Category --> TransactionType
+    ReceivableAccount --> ReceivableAccountStatus
+    PayableAccount --> PayableAccountStatus
