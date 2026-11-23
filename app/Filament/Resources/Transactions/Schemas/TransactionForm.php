@@ -15,19 +15,25 @@ class TransactionForm
         return $schema
             ->components([
                 TextInput::make('description')
+                    ->label('Descrição')
                     ->required(),
                 Select::make('type')
+                    ->label('Tipo')
                     ->options(TransactionType::class)
                     ->required(),
                 TextInput::make('value')
+                    ->label('Valor')
                     ->required()
                     ->numeric(),
                 DatePicker::make('date')
+                    ->label('Data')
                     ->required(),
                 Select::make('category_id')
+                    ->label('Categoria')
                     ->relationship('category', 'name')
                     ->required(),
                 Select::make('bank_account_id')
+                    ->label('Conta bancária')
                     ->relationship('bankAccount', 'name'),
             ]);
     }

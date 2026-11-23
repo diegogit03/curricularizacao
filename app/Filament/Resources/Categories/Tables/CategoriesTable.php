@@ -21,18 +21,23 @@ class CategoriesTable
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label('Nome')
                     ->searchable(),
                 TextColumn::make('type')
+                    ->label('Tipo')
                     ->badge(),
                 TextColumn::make('deleted_at')
+                    ->label('Excluído em')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
+                    ->label('Criado em')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('Atualizado em')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -40,6 +45,7 @@ class CategoriesTable
             ->filters([
                 TrashedFilter::make(),
                 SelectFilter::make('type')
+                    ->label('Tipo')
                     ->options(TransactionType::class),
             ])
             ->recordActions([

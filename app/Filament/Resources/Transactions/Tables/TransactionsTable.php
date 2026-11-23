@@ -21,30 +21,39 @@ class TransactionsTable
         return $table
             ->columns([
                 TextColumn::make('description')
+                    ->label('Descrição')
                     ->searchable(),
                 TextColumn::make('type')
+                    ->label('Tipo')
                     ->badge(),
                 TextColumn::make('value')
+                    ->label('Valor')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('date')
+                    ->label('Data')
                     ->date()
                     ->sortable(),
                 TextColumn::make('category.name')
+                    ->label('Categoria')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('bankAccount.name')
+                    ->label('Conta bancária')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('deleted_at')
+                    ->label('Excluído em')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
+                    ->label('Criado em')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('Atualizado em')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -52,10 +61,13 @@ class TransactionsTable
             ->filters([
                 TrashedFilter::make(),
                 SelectFilter::make('type')
+                    ->label('Tipo')
                     ->options(TransactionType::class),
                 SelectFilter::make('category')
+                    ->label('Categoria')
                     ->relationship('category', 'name'),
                 SelectFilter::make('bankAccount')
+                    ->label('Conta bancária')
                     ->relationship('bankAccount', 'name'),
             ])
             ->recordActions([

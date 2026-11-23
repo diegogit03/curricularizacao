@@ -19,25 +19,33 @@ class BankAccountsTable
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label('Nome')
                     ->searchable(),
                 TextColumn::make('bank')
+                    ->label('Banco')
                     ->searchable(),
                 TextColumn::make('agency')
+                    ->label('Agência')
                     ->searchable(),
                 TextColumn::make('account_number')
+                    ->label('Número da conta')
                     ->searchable(),
                 TextColumn::make('initial_balance')
+                    ->label('Saldo inicial')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('deleted_at')
+                    ->label('Excluído em')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
+                    ->label('Criado em')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('Atualizado em')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

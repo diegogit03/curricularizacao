@@ -14,8 +14,10 @@ class CategoryForm
         return $schema
             ->components([
                 TextInput::make('name')
+                    ->label('Nome')
                     ->required(),
                 Select::make('type')
+                    ->label('Tipo')
                     ->options(TransactionType::class)
                     ->required(),
             ]);
