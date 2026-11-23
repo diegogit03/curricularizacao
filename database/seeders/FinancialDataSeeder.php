@@ -2,13 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Enums\PayableAccountStatus;
-use App\Enums\ReceivableAccountStatus;
+use App\Enums\AccountStatus;
 use App\Enums\TransactionType;
+use App\Models\Account;
 use App\Models\BankAccount;
 use App\Models\Category;
-use App\Models\PayableAccount;
-use App\Models\ReceivableAccount;
 use App\Models\Transaction;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -33,6 +31,8 @@ class FinancialDataSeeder extends Seeder
         $this->seedReceivableAccounts();
 
         $this->assignBankAccounts();
+
+        Account::query()->pastDue()->update(['status' => AccountStatus::Overdue]);
     }
 
     private function seedBankAccounts(): void
@@ -64,9 +64,13 @@ class FinancialDataSeeder extends Seeder
             ->where('type', TransactionType::Expense)
             ->update(['bank_account_id' => $checking->id]);
 
-        PayableAccount::whereNull('bank_account_id')->update(['bank_account_id' => $checking->id]);
+        Account::whereNull('bank_account_id')
+            ->where('type', TransactionType::Expense)
+            ->update(['bank_account_id' => $checking->id]);
 
-        ReceivableAccount::whereNull('bank_account_id')->update(['bank_account_id' => $digital->id]);
+        Account::whereNull('bank_account_id')
+            ->where('type', TransactionType::Revenue)
+            ->update(['bank_account_id' => $digital->id]);
     }
 
     private function seedCategories(): void
@@ -233,12 +237,13 @@ class FinancialDataSeeder extends Seeder
         ];
 
         foreach ($paid as $item) {
-            PayableAccount::create([
+            Account::create([
                 'description' => $item['description'],
-                'status' => PayableAccountStatus::Paid,
+                'type' => TransactionType::Expense,
+                'status' => AccountStatus::Settled,
                 'value' => $item['value'],
                 'due_at' => now()->addDays($item['due']),
-                'paid_at' => now()->addDays($item['paid']),
+                'settled_at' => now()->addDays($item['paid']),
                 'category_id' => $item['category']->id,
             ]);
         }
@@ -250,15 +255,16 @@ class FinancialDataSeeder extends Seeder
             ['description' => 'Matrícula do curso', 'value' => 480.00, 'due' => 15, 'category' => $education],
             ['description' => 'Água e esgoto', 'value' => 92.50, 'due' => 12, 'category' => $water],
             ['description' => 'Condomínio', 'value' => 320.00, 'due' => 20, 'category' => $rent],
+            ['description' => 'IPVA - parcela 1', 'value' => 410.00, 'due' => -4, 'category' => $transport],
         ];
 
         foreach ($pending as $item) {
-            PayableAccount::create([
+            Account::create([
                 'description' => $item['description'],
-                'status' => PayableAccountStatus::Pending,
+                'type' => TransactionType::Expense,
+                'status' => AccountStatus::Pending,
                 'value' => $item['value'],
                 'due_at' => now()->addDays($item['due']),
-                'paid_at' => now()->addDays($item['due']),
                 'category_id' => $item['category']->id,
             ]);
         }
@@ -276,12 +282,13 @@ class FinancialDataSeeder extends Seeder
         ];
 
         foreach ($received as $item) {
-            ReceivableAccount::create([
+            Account::create([
                 'description' => $item['description'],
-                'status' => ReceivableAccountStatus::Received,
+                'type' => TransactionType::Revenue,
+                'status' => AccountStatus::Settled,
                 'value' => $item['value'],
                 'due_at' => now()->addDays($item['due']),
-                'received_at' => now()->addDays($item['received']),
+                'settled_at' => now()->addDays($item['received']),
                 'category_id' => $item['category']->id,
             ]);
         }
@@ -294,12 +301,12 @@ class FinancialDataSeeder extends Seeder
         ];
 
         foreach ($pending as $item) {
-            ReceivableAccount::create([
+            Account::create([
                 'description' => $item['description'],
-                'status' => ReceivableAccountStatus::Pending,
+                'type' => TransactionType::Revenue,
+                'status' => AccountStatus::Pending,
                 'value' => $item['value'],
                 'due_at' => now()->addDays($item['due']),
-                'received_at' => now()->addDays($item['due']),
                 'category_id' => $item['category']->id,
             ]);
         }

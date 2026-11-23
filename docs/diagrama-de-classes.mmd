@@ -15,8 +15,7 @@ classDiagram
         +string name
         +TransactionType type
         +transactions() HasMany
-        +receivableAccounts() HasMany
-        +payableAccounts() HasMany
+        +accounts() HasMany
     }
 
     class Transaction {
@@ -29,26 +28,19 @@ classDiagram
         +bankAccount() BelongsTo
     }
 
-    class ReceivableAccount {
+    class Account {
         <<Model>>
         +string description
-        +ReceivableAccountStatus status
+        +TransactionType type
+        +AccountStatus status
         +decimal value
         +date due_at
-        +date received_at
+        +date settled_at
         +category() BelongsTo
         +bankAccount() BelongsTo
-    }
-
-    class PayableAccount {
-        <<Model>>
-        +string description
-        +PayableAccountStatus status
-        +decimal value
-        +date due_at
-        +date paid_at
-        +category() BelongsTo
-        +bankAccount() BelongsTo
+        +isSettled() bool
+        +markAsSettled(date settledAt) void
+        +pastDue() Builder
     }
 
     class BankAccount {
@@ -59,8 +51,7 @@ classDiagram
         +string account_number
         +decimal initial_balance
         +transactions() HasMany
-        +receivableAccounts() HasMany
-        +payableAccounts() HasMany
+        +accounts() HasMany
     }
 
     class TransactionType {
@@ -69,29 +60,27 @@ classDiagram
         EXPENSE
     }
 
-    class ReceivableAccountStatus {
+    class AccountStatus {
         <<enum>>
-        RECEIVED
         PENDING
+        SETTLED
+        OVERDUE
     }
 
-    class PayableAccountStatus {
-        <<enum>>
-        PAID
-        PENDING
+    class MarkOverdueAccounts {
+        <<Command>>
+        +handle() int
     }
 
     User --> Transaction : usa/histórico
     Transaction "*" --> "1" Category : pertence a
-    ReceivableAccount "*" --> "1" Category : pertence a
-    PayableAccount "*" --> "1" Category : pertence a
     Category "1" --> "*" Transaction : possui
-    Category "1" --> "*" ReceivableAccount : possui
-    Category "1" --> "*" PayableAccount : possui
     Transaction "*" --> "0..1" BankAccount : movimenta
-    ReceivableAccount "*" --> "0..1" BankAccount : recebida em
-    PayableAccount "*" --> "0..1" BankAccount : paga por
+    Account "*" --> "1" Category : pertence a
+    Account "*" --> "0..1" BankAccount : vinculada a
+    Category "1" --> "*" Account : possui
+    MarkOverdueAccounts ..> Account : marca vencidas
+    Account --> TransactionType
+    Account --> AccountStatus
     Transaction --> TransactionType
     Category --> TransactionType
-    ReceivableAccount --> ReceivableAccountStatus
-    PayableAccount --> PayableAccountStatus

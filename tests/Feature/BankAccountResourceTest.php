@@ -2,21 +2,18 @@
 
 namespace Tests\Feature;
 
-use App\Enums\PayableAccountStatus;
-use App\Enums\ReceivableAccountStatus;
+use App\Enums\AccountStatus;
 use App\Enums\TransactionType;
+use App\Filament\Resources\Accounts\Pages\CreateAccount;
 use App\Filament\Resources\BankAccounts\Pages\CreateBankAccount;
 use App\Filament\Resources\BankAccounts\Pages\EditBankAccount;
 use App\Filament\Resources\BankAccounts\Pages\ListBankAccounts;
-use App\Filament\Resources\PayableAccounts\Pages\CreatePayableAccount;
-use App\Filament\Resources\ReceivableAccounts\Pages\CreateReceivableAccount;
 use App\Filament\Resources\Transactions\Pages\CreateTransaction;
 use App\Filament\Resources\Transactions\Pages\EditTransaction;
 use App\Filament\Resources\Transactions\Pages\ListTransactions;
+use App\Models\Account;
 use App\Models\BankAccount;
 use App\Models\Category;
-use App\Models\PayableAccount;
-use App\Models\ReceivableAccount;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -210,21 +207,22 @@ class BankAccountResourceTest extends TestCase
         $category = Category::factory()->create();
         $bankAccount = BankAccount::factory()->create();
 
-        Livewire::test(CreatePayableAccount::class)
+        Livewire::test(CreateAccount::class)
             ->fillForm([
                 'description' => 'Aluguel',
-                'status' => PayableAccountStatus::Pending,
+                'type' => TransactionType::Expense,
+                'status' => AccountStatus::Pending,
                 'value' => 1400,
                 'due_at' => '2026-12-10',
-                'paid_at' => '2026-12-10',
                 'category_id' => $category->id,
                 'bank_account_id' => $bankAccount->id,
             ])
             ->call('create')
             ->assertHasNoFormErrors();
 
-        $this->assertDatabaseHas(PayableAccount::class, [
+        $this->assertDatabaseHas(Account::class, [
             'description' => 'Aluguel',
+            'type' => TransactionType::Expense,
             'bank_account_id' => $bankAccount->id,
         ]);
     }
@@ -234,21 +232,22 @@ class BankAccountResourceTest extends TestCase
         $category = Category::factory()->create();
         $bankAccount = BankAccount::factory()->create();
 
-        Livewire::test(CreateReceivableAccount::class)
+        Livewire::test(CreateAccount::class)
             ->fillForm([
                 'description' => 'Consultoria',
-                'status' => ReceivableAccountStatus::Pending,
+                'type' => TransactionType::Revenue,
+                'status' => AccountStatus::Pending,
                 'value' => 2200,
                 'due_at' => '2026-12-12',
-                'received_at' => '2026-12-12',
                 'category_id' => $category->id,
                 'bank_account_id' => $bankAccount->id,
             ])
             ->call('create')
             ->assertHasNoFormErrors();
 
-        $this->assertDatabaseHas(ReceivableAccount::class, [
+        $this->assertDatabaseHas(Account::class, [
             'description' => 'Consultoria',
+            'type' => TransactionType::Revenue,
             'bank_account_id' => $bankAccount->id,
         ]);
     }
@@ -257,12 +256,11 @@ class BankAccountResourceTest extends TestCase
     {
         $bankAccount = BankAccount::factory()->create();
         Transaction::factory()->count(2)->create(['bank_account_id' => $bankAccount->id]);
-        PayableAccount::factory()->create(['bank_account_id' => $bankAccount->id]);
-        ReceivableAccount::factory()->create(['bank_account_id' => $bankAccount->id]);
+        Account::factory()->payable()->create(['bank_account_id' => $bankAccount->id]);
+        Account::factory()->receivable()->create(['bank_account_id' => $bankAccount->id]);
 
         $this->assertCount(2, $bankAccount->transactions);
-        $this->assertCount(1, $bankAccount->payableAccounts);
-        $this->assertCount(1, $bankAccount->receivableAccounts);
+        $this->assertCount(2, $bankAccount->accounts);
         $this->assertTrue($bankAccount->transactions->first()->bankAccount->is($bankAccount));
     }
 
@@ -270,7 +268,7 @@ class BankAccountResourceTest extends TestCase
     {
         $bankAccount = BankAccount::factory()->create();
         $transaction = Transaction::factory()->create(['bank_account_id' => $bankAccount->id]);
-        $payable = PayableAccount::factory()->create(['bank_account_id' => $bankAccount->id]);
+        $payable = Account::factory()->payable()->create(['bank_account_id' => $bankAccount->id]);
 
         $bankAccount->forceDelete();
 

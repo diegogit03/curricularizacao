@@ -6,6 +6,7 @@ use App\Enums\TransactionType;
 use App\Filament\Resources\Transactions\Pages\CreateTransaction;
 use App\Filament\Widgets\StatsOverview;
 use App\Filament\Widgets\TransactionsChart;
+use App\Models\Account;
 use App\Models\Category;
 use App\Models\Transaction;
 use App\Models\User;
@@ -54,16 +55,13 @@ class ResourcePagesTest extends TestCase
         $this->get('/dashboard/transactions/create')->assertOk();
     }
 
-    public function test_receivable_account_resource_pages_render(): void
+    public function test_account_resource_pages_render(): void
     {
-        $this->get('/dashboard/receivable-accounts')->assertOk();
-        $this->get('/dashboard/receivable-accounts/create')->assertOk();
-    }
+        $account = Account::factory()->create();
 
-    public function test_payable_account_resource_pages_render(): void
-    {
-        $this->get('/dashboard/payable-accounts')->assertOk();
-        $this->get('/dashboard/payable-accounts/create')->assertOk();
+        $this->get('/dashboard/accounts')->assertOk();
+        $this->get('/dashboard/accounts/create')->assertOk();
+        $this->get("/dashboard/accounts/{$account->id}/edit")->assertOk();
     }
 
     public function test_transaction_can_be_created(): void

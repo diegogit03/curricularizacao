@@ -2,11 +2,9 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enums\PayableAccountStatus;
-use App\Enums\ReceivableAccountStatus;
+use App\Enums\AccountStatus;
 use App\Enums\TransactionType;
-use App\Models\PayableAccount;
-use App\Models\ReceivableAccount;
+use App\Models\Account;
 use App\Models\Transaction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
@@ -25,12 +23,14 @@ class StatsOverview extends StatsOverviewWidget
             ->where('type', TransactionType::Expense)
             ->sum('value');
 
-        $receivablePending = ReceivableAccount::query()
-            ->where('status', ReceivableAccountStatus::Pending)
+        $receivablePending = Account::query()
+            ->where('type', TransactionType::Revenue)
+            ->whereIn('status', [AccountStatus::Pending, AccountStatus::Overdue])
             ->sum('value');
 
-        $payablePending = PayableAccount::query()
-            ->where('status', PayableAccountStatus::Pending)
+        $payablePending = Account::query()
+            ->where('type', TransactionType::Expense)
+            ->whereIn('status', [AccountStatus::Pending, AccountStatus::Overdue])
             ->sum('value');
 
         return [
@@ -43,11 +43,11 @@ class StatsOverview extends StatsOverviewWidget
                 ->descriptionIcon(Heroicon::ArrowTrendingDown)
                 ->color('danger'),
             Stat::make('A receber', Number::currency((float) $receivablePending, 'BRL', 'pt_BR'))
-                ->description('Contas a receber pendentes')
+                ->description('Contas a receber em aberto')
                 ->descriptionIcon(Heroicon::Banknotes)
                 ->color('warning'),
             Stat::make('A pagar', Number::currency((float) $payablePending, 'BRL', 'pt_BR'))
-                ->description('Contas a pagar pendentes')
+                ->description('Contas a pagar em aberto')
                 ->descriptionIcon(Heroicon::ExclamationCircle)
                 ->color('warning'),
         ];

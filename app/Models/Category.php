@@ -33,13 +33,8 @@ class Category extends Model
         return $this->hasMany(Transaction::class);
     }
 
-    public function receivableAccounts(): HasMany
+    public function accounts(): HasMany
     {
-        return $this->hasMany(ReceivableAccount::class);
-    }
-
-    public function payableAccounts(): HasMany
-    {
-        return $this->hasMany(PayableAccount::class);
+        return $this->hasMany(Account::class);
     }
 }
