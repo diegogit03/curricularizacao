@@ -17,9 +17,11 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Diego',
-            'email' => 'diego@email.com',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'diego@email.com'],
+            ['name' => 'Diego'],
+        );
+
+        $this->call(FinancialDataSeeder::class);
     }
 }
