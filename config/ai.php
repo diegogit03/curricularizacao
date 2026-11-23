@@ -13,12 +13,27 @@ return [
     |
     */
 
-    'default' => 'openai',
+    'default' => 'openai-compatible',
     'default_for_images' => 'gemini',
     'default_for_audio' => 'openai',
     'default_for_transcription' => 'openai',
     'default_for_embeddings' => 'openai',
     'default_for_reranking' => 'cohere',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Conversations
+    |--------------------------------------------------------------------------
+    |
+    | Here you may configure conversation persistence for agents using the
+    | RemembersConversations trait. Titles are derived from the first user
+    | message instead of making an extra provider call.
+    |
+    */
+
+    'conversations' => [
+        'generate_title' => false,
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -136,6 +151,11 @@ return [
             'driver' => 'openai-compatible',
             'url' => env('OPENAI_COMPATIBLE_URL'),
             'key' => env('OPENAI_COMPATIBLE_API_KEY'),
+            'models' => [
+                'text' => [
+                    'default' => env('OPENAI_COMPATIBLE_MODEL', 'deepseek-v4-pro'),
+                ],
+            ],
         ],
 
         'openrouter' => [
