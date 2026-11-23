@@ -36,6 +36,9 @@ class ReceivableAccountsTable
                 TextColumn::make('category.name')
                     ->sortable()
                     ->searchable(),
+                TextColumn::make('bankAccount.name')
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
@@ -55,6 +58,8 @@ class ReceivableAccountsTable
                     ->options(ReceivableAccountStatus::class),
                 SelectFilter::make('category')
                     ->relationship('category', 'name'),
+                SelectFilter::make('bankAccount')
+                    ->relationship('bankAccount', 'name'),
             ])
             ->recordActions([
                 EditAction::make(),

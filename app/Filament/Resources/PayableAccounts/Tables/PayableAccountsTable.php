@@ -36,6 +36,9 @@ class PayableAccountsTable
                 TextColumn::make('category.name')
                     ->sortable()
                     ->searchable(),
+                TextColumn::make('bankAccount.name')
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
@@ -55,6 +58,8 @@ class PayableAccountsTable
                     ->options(PayableAccountStatus::class),
                 SelectFilter::make('category')
                     ->relationship('category', 'name'),
+                SelectFilter::make('bankAccount')
+                    ->relationship('bankAccount', 'name'),
             ])
             ->recordActions([
                 EditAction::make(),

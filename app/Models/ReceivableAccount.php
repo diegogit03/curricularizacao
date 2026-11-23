@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['description', 'status', 'value', 'due_at', 'received_at', 'category_id'])]
+#[Fillable(['description', 'status', 'value', 'due_at', 'received_at', 'category_id', 'bank_account_id'])]
 class ReceivableAccount extends Model
 {
     /** @use HasFactory<ReceivableAccountFactory> */
@@ -34,5 +34,10 @@ class ReceivableAccount extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function bankAccount(): BelongsTo
+    {
+        return $this->belongsTo(BankAccount::class);
     }
 }

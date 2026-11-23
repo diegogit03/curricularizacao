@@ -33,6 +33,9 @@ class TransactionsTable
                 TextColumn::make('category.name')
                     ->sortable()
                     ->searchable(),
+                TextColumn::make('bankAccount.name')
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
@@ -52,6 +55,8 @@ class TransactionsTable
                     ->options(TransactionType::class),
                 SelectFilter::make('category')
                     ->relationship('category', 'name'),
+                SelectFilter::make('bankAccount')
+                    ->relationship('bankAccount', 'name'),
             ])
             ->recordActions([
                 EditAction::make(),

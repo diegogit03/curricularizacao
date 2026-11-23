@@ -27,6 +27,8 @@ class TransactionForm
                 Select::make('category_id')
                     ->relationship('category', 'name')
                     ->required(),
+                Select::make('bank_account_id')
+                    ->relationship('bankAccount', 'name'),
             ]);
     }
 }
