@@ -3,10 +3,12 @@
 namespace Database\Seeders;
 
 use App\Enums\AccountStatus;
+use App\Enums\RecurrenceFrequency;
 use App\Enums\TransactionType;
 use App\Models\Account;
 use App\Models\BankAccount;
 use App\Models\Category;
+use App\Models\RecurringAccount;
 use App\Models\Transaction;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -29,6 +31,8 @@ class FinancialDataSeeder extends Seeder
         $this->seedPayableAccounts();
 
         $this->seedReceivableAccounts();
+
+        $this->seedRecurringAccounts();
 
         $this->assignBankAccounts();
 
@@ -71,6 +75,44 @@ class FinancialDataSeeder extends Seeder
         Account::whereNull('bank_account_id')
             ->where('type', TransactionType::Revenue)
             ->update(['bank_account_id' => $digital->id]);
+
+        RecurringAccount::whereNull('bank_account_id')
+            ->where('type', TransactionType::Expense)
+            ->update(['bank_account_id' => $checking->id]);
+
+        RecurringAccount::whereNull('bank_account_id')
+            ->where('type', TransactionType::Revenue)
+            ->update(['bank_account_id' => $digital->id]);
+    }
+
+    /**
+     * Fixed revenues and expenses that feed the cash flow projection.
+     */
+    private function seedRecurringAccounts(): void
+    {
+        $nextMonth = now()->addMonthNoOverflow()->startOfMonth();
+
+        $items = [
+            ['description' => 'Salário', 'type' => TransactionType::Revenue, 'frequency' => RecurrenceFrequency::Monthly, 'value' => 5200.00, 'day' => 5, 'category' => 'Salário'],
+            ['description' => 'Contrato de consultoria', 'type' => TransactionType::Revenue, 'frequency' => RecurrenceFrequency::Monthly, 'value' => 1800.00, 'day' => 15, 'category' => 'Serviços'],
+            ['description' => 'Aluguel do imóvel', 'type' => TransactionType::Expense, 'frequency' => RecurrenceFrequency::Monthly, 'value' => 1400.00, 'day' => 10, 'category' => 'Aluguel'],
+            ['description' => 'Internet fibra', 'type' => TransactionType::Expense, 'frequency' => RecurrenceFrequency::Monthly, 'value' => 129.90, 'day' => 20, 'category' => 'Internet'],
+            ['description' => 'Plano de saúde', 'type' => TransactionType::Expense, 'frequency' => RecurrenceFrequency::Monthly, 'value' => 540.00, 'day' => 25, 'category' => 'Saúde'],
+            ['description' => 'Supermercado', 'type' => TransactionType::Expense, 'frequency' => RecurrenceFrequency::Weekly, 'value' => 195.00, 'day' => 3, 'category' => 'Supermercado'],
+            ['description' => 'Seguro do carro', 'type' => TransactionType::Expense, 'frequency' => RecurrenceFrequency::Semiannual, 'value' => 1250.00, 'day' => 15, 'category' => 'Transporte'],
+        ];
+
+        foreach ($items as $item) {
+            RecurringAccount::firstOrCreate(
+                ['description' => $item['description'], 'type' => $item['type']],
+                [
+                    'frequency' => $item['frequency'],
+                    'value' => $item['value'],
+                    'starts_at' => $nextMonth->copy()->day($item['day']),
+                    'category_id' => Category::where('name', $item['category'])->first()->id,
+                ],
+            );
+        }
     }
 
     private function seedCategories(): void
